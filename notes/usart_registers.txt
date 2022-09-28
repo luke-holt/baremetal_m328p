@@ -1,0 +1,59 @@
+
+
+USART Registers
+
+UDR0	Data register
+
+UCSR0A	USART Control and Status Register 0 A
+	7: RXC0		USART Receive Complete
+	6: TXC0		USART Transmit Complete
+	5: UDRE0	USART Data Register Empty
+	4: FE0		Frame Error
+	3: DOR0		Data Overrun
+	2: UPE0		USART Parity Error
+	1: U2X0		Double the USART Transmission Speed
+	0: MPCM0	Multi-processor Communication mode
+
+UCSR0B	USART Control and Status Register 0 B
+	7: RXCIE0	RX Complete Interrupt Enable 0
+	6: TXCIE0	TX Complete Interrupt Enable 0
+	5: UDRIE0	USART Data Register Empty Interrupt Enable 0
+	4: RXEN0	Receiver Enable 0
+	3: TXEN0	Transmitter Enable 0
+	2: UCSZ02	Third bit, Character Size 0
+	1: RXB80	Receive Data Bit 8 0
+	0: TXB80	Transmit Data Bit 8 0
+
+UCSR0C	USART Control and Status Register 0 C
+	7: UMSEL01	Second bit, USART Mode Select
+	6: UMSEL00	First bit, USART Mode Select
+		- 00	Async USART
+		- 01	Sync USART
+		- 10	(Reserved)
+		- 11	Master SPI (MSPIM)
+	5: UPM01	Second bit, Parity Mode
+	4: UPM00	First bit, Parity Mode
+		- 00	Disabled
+		- 01	(Reserved)
+		- 10	Enabled, even parity
+		- 11	Enabled, odd parity
+	3: USBS0	Stop Bit Select
+		- 0		1 bit
+		- 1		2 bit
+	2: UCSZ01	Second bit, Character Size
+	1: UCSZ00	First bit, Character Size
+		- 000	5 bit
+		- 001	6 bit
+		- 010	7 bit
+		- 011	8 bit
+		- 100	(Reserved)
+		- 101	(Reserved)
+		- 110	(Reserved)
+		- 111	9 bit
+	0: UCPOL0	Clock Polarity
+		- 0		TX: Rising XCK0 edge, RX: Falling XCK0 edge
+		- 1		TX: Falling XCK0 edge, RX: Rising XCK0 edge
+
+UBRR0H, UBRR0L	High and Low registers, USART Baud Rate Registers
+	15:12 UBRR0H		(Reserved)
+	11:0 UBRR0H, UBRR0L	Baud Rate

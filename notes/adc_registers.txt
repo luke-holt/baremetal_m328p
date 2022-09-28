@@ -1,0 +1,75 @@
+ADC Registers
+
+Conversion times
+First:			25 cycles
+Normal:		 	13 cycles
+Auto triggered:	13.5 cycles (~14)
+
+
+ADMUX	ADC Multiplexer Selection Register
+	7: REFS1
+	6: REFS0	Reference Selection Bits
+		- 00	AREF used. Internal VREF disabled
+		- 01	AVCC with external capcitor at AREF pin
+		- 10	(Reserved)
+		- 11	Internal 1.1V voltage reference with external cap at AREF pin
+	5: ADLAR	ADC Left Adjust Result
+	4: (Reserved)
+	3: MUX3
+	2: MUX2
+	1: MUX1
+	0: MUX0		Analog Channel Selection Bits
+		- 0000	ADC0
+		- 0001	ADC1
+		- 0010	ADC2
+		- 0011	ADC3
+		- 0100	ADC4
+		- 0101	ADC5
+		- 0110	ADC6
+		- 0111	ADC7
+		- 1000	ADC8 * for temperature sensor
+		- 1110	ADC0
+		- 1111	ADC0
+
+ADCSRA	ADC Control and Status Register A
+	7: ADEN		ADC Enable
+	6: ADSC 	ADC Start Conversion
+	5: ADATE	ADC Auto Trigger Enable
+	4: ADIF		ADC Interrupt Flag
+	3: ADIE		ADC Interrupt Enable
+	2: ADPS2
+	1: ADPS1
+	0: ADPS0	ADC Prescaler Select Bits
+		- 000	2
+		- 001	2
+		- 010	4
+		- 011	8
+		- 100	16
+		- 101	32
+		- 110	64
+		- 111	128
+
+ADCL, ADCH	ADC Data Register
+	ADLAR = 0	(Adjust left)
+		15:10	(Reserved)
+		9:0		Conversion result, bits 9-0
+	ADLAR = 1	(Adjust right)
+		15:6	Conversion result, bits 9-0
+		5:0		(Reserved)
+
+ADCSRB	ADC Control and Status Register B
+	7, 5:3		(Reserved)
+	6: ACME
+	2, 1, 0		ADC Auto Trigger Source
+		- 000	Free running mode
+		- 001	Analog comparator
+		- 010	External interrupt request 0
+		- 011	Timer/Counter0 compare match A
+		- 100	Timer/Counter0 overflow
+		- 101	Timer/Counter1 compare match B
+		- 110	Timer/Counter1 overflow
+		- 111	Timer/Counter1 capture event
+
+DIDR0	Digital Input Disable Register 0
+	7:6		(Reserved)
+	5:0		ADC5:0 Digital Input Disable
