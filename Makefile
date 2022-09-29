@@ -1,38 +1,72 @@
 PORT = /dev/ttyUSB0
 FLASH_BAUD = 115200
 MONITOR_BAUD = 9600
+MCU = atmega328p
 
 # 8 bits, no parity bit, 1 stop bit
-USART_PACKET = 8-N-1
+USART_FORMAT = 8-N-1
 
-MCU = atmega328p
-CFLAGS = -Os -DF_CPU=16000000UL -mmcu=$(MCU) -I include
+# Directories
+INCLUDE_DIRS = include
+LIB_DIRS = $(INCLUDE_DIRS)
+BUILD_DIR = build
+OBJ_DIR = $(BUILD_DIR)/obj
+SRC_DIR = src
 
-WARNINGS = -Wall -Wextra -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-align -Wsign-compare \
-			-Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wunused
+# Files
+TARGET = $(BUILD_DIR)/app
 
+SOURCES =	\
+	usart.c	\
+	pwm.c	\
+	adc.c	\
+	main.c
+
+OBJECT_NAMES = $(SOURCES:.c=.o)
+OBJECTS = $(addprefix $(OBJ_DIR),$(OBJECT_NAMES))
+
+# Toolchain
 CC = avr-gcc
 OBJCP = avr-objcopy
+AVRDUDE = sudo avrdude
+
+# Flags
+WFLAGS = -Wall -Wextra -Werror -Wshadow -Wpointer-arith		\
+		 -Wbad-function-cast -Wcast-align -Wsign-compare	\
+		 -Waggregate-return -Wstrict-prototypes				\
+		 -Wmissing-prototypes -Wmissing-declarations		\
+		 -Wunused
+COMMON_FLAGS = -Os -mmcu=$(MCU) -DF_CPU=16000000UL
+CFLAGS = $(COMMON_FLAGS) $(WFLAGS) $(addprefix -I,$(INCLUDE_DIRS))
+LDFLAGS = $(COMMON_FLAGS) $(addprefix -L,$(LIB_DIRS))
 
 
-app: usart.o pwm.o adc.o src/main.c
-	$(CC) $(CFLAGS) $(WARNINGS) -o build/app src/main.c build/usart.o build/pwm.o build/adc.o
-	$(OBJCP) -O ihex -R .eeprom build/app build/app.hex
+# Compiling
+$(OBJ_DIR)%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	@echo "Compiling $@..."
+	$(CC) $(CFLAGS) -c $^ -o $@
+	@echo ""
 
-usart.o: include/usart.h src/usart.c
-	$(CC) $(CFLAGS) $(WARNINGS) -c src/usart.c -o build/usart.o
+# Linking. Remove eeprom section and convert binary to ihex format
+$(TARGET): $(OBJECTS)
+	@mkdir -p $(dir $@)
+	@echo "Linking..."
+	$(CC) $(LDFLAGS) -o $@ $^
+	@echo "\nConverting to ihex format"
+	$(OBJCP) -O ihex -R .eeprom $@ $@.hex
 
-pwm.o: include/pwm.h src/pwm.c
-	$(CC) $(CFLAGS) $(WARNINGS) -c src/pwm.c -o build/pwm.o
+# Phony targets
+.PHONY: all clean flash monitor
 
-adc.o: include/adc.h src/adc.c
-	$(CC) $(CFLAGS) $(WARNINGS) -c src/adc.c -o build/adc.o
+# Default
+all: $(TARGET)
 
 clean:
-	rm build/*
+	@rm -r $(BUILD_DIR)
 
-flash: app
-	sudo avrdude -F -V -c arduino -p $(MCU) -P $(PORT) -b $(FLASH_BAUD) -U flash:w:build/app.hex
+flash: all
+	$(AVRDUDE) -F -V -c arduino -p $(MCU) -P $(PORT) -b $(FLASH_BAUD) -U flash:w:$(TARGET).hex
 
 monitor:
-	screen $(PORT) $(MONITOR_BAUD) $(USART_PACKET)
+	screen $(PORT) $(MONITOR_BAUD) $(USART_FORMAT)

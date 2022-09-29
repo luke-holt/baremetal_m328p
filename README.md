@@ -9,7 +9,7 @@ The `avr-gcc` compiler is used along with `avrdude`.
 # To do
 ---
 - [ ] Add 1602a LCD support
-- [ ] Refactor Makefile to be scalable
+- [x] Refactor Makefile to be scalable
 - [ ] Refactor current HAL to be interrupt driven
 - [ ] Create examples directory
 - [ ] Add wiring diagram
