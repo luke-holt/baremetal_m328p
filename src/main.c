@@ -5,10 +5,12 @@
 #include "usart.h"
 #include "pwm.h"
 #include "adc.h"
+#include "lcd1602a.h"
 
 
 int main(void)
 {
+	/* Init pwm */
 	pwm_init();
 	
 	/* Init usart with baud rate */
@@ -18,6 +20,8 @@ int main(void)
 	adc_init(ADC_PS_128);
 
 	usart_tx_str("Setup complete.\n\r");
+
+	lcd_init();
 
 	uint16_t adc_value;
 

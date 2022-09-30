@@ -9,7 +9,9 @@ The `avr-gcc` toolchain is used along with `avrdude`.
 # To do
 ---
 - [ ] Add 1602a LCD support
+	- In progress. Note: the code related to the LCD is not useable yet.
 - [x] Refactor Makefile to be scalable
 - [ ] Refactor current HAL to be interrupt driven
 - [ ] Create examples directory
 - [ ] Add wiring diagram
+- [ ] Add error system
