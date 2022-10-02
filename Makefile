@@ -32,7 +32,7 @@ OBJCP = avr-objcopy
 AVRDUDE = sudo avrdude
 
 # Flags
-WFLAGS = -Wall -Wextra -Werror -Wshadow -Wpointer-arith		\
+WFLAGS = -Wall -Wextra -Wshadow -Wpointer-arith		\
 		 -Wbad-function-cast -Wcast-align -Wsign-compare	\
 		 -Waggregate-return -Wstrict-prototypes				\
 		 -Wmissing-prototypes -Wmissing-declarations		\
