@@ -12,6 +12,9 @@ The `avr-gcc` toolchain is used along with `avrdude`.
 	- In progress. Note: the code related to the LCD is not useable yet.
 - [x] Refactor Makefile to be scalable
 - [ ] Refactor current HAL to be interrupt driven
+	- [ ] USART
+	- [ ] PWM
+	- [ ] ADC
 - [ ] Create examples directory
 - [ ] Add wiring diagram
 - [ ] Add error system

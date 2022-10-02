@@ -13,8 +13,6 @@
  */
 static char lcd_cur_state_top[16];
 static char lcd_cur_state_bot[16];
-static uint8_t len_top;
-static uint8_t len_bot;
 
 
 static void lcd_set_rs(uint8_t state)
@@ -61,31 +59,36 @@ static void lcd_send(uint8_t byte, uint8_t rs)
 }
 
 
-void lcd_println(char *str, uint8_t len, uint8_t row)
+void lcd_println(char *str, uint8_t row)
 {
-	if (row) {
+	char *line;
+
+	if (row == LCD_BOT_ROW) {
 		lcd_send((0x80 | 0x40), LOW);
-		len_bot = 0;
+		line = lcd_cur_state_bot;
 	} else {
 		lcd_send((0x80 | 0x00), LOW);
-		len_top = 0;
+		line = lcd_cur_state_top;
 	}
 
-	int i = 0;
+	/* FIXME: No spaghetti pls */
 	char c = *str;
-	while (i < len) {
-		lcd_send(c, HIGH);
+	for (int i = 0; i < 16; i++) {
+		if (c) {
+			lcd_send(c, HIGH);
+			
+			/* Update current state buffers */
+			line[i] = c;
 
-		if (row) {
-			lcd_cur_state_bot[i] = c;
-			len_bot++;
+			/* Next char */
+			c = *(++str);
 		} else {
-			lcd_cur_state_top[i] = c;
-			len_top++;
-		}
+			/* blank characters */
+			lcd_send(0x20, HIGH);
 
-		c = *(++str);
-		i++;
+			/* Space ascii code */
+			line[i] = 0x20;
+		}
 	}
 }
 
@@ -97,10 +100,7 @@ void lcd_shift_down(void)
 	_delay_ms(2);
 
 	/* Print top into bottom */
-	lcd_println(lcd_cur_state_top, len_top, LCD_TOP_ROW);
-
-	len_bot = len_top;
-	len_top = 0;
+	lcd_println(lcd_cur_state_top, LCD_BOT_ROW);
 }
 
 
@@ -128,8 +128,8 @@ void lcd_init(void)
     /* Set to 4 bit mode */
     lcd_write_4bits(0x02);
 
-	/* Display on, cursor on, blink off */
-	lcd_send(0x0E, LOW);
+	/* Display on, cursor off, blink off */
+	lcd_send(0x0C, LOW);
 
 	/* Entry mode */
 	lcd_send(0x06, LOW);

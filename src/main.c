@@ -17,18 +17,18 @@ int main(void)
 	
 	/* Init usart with baud rate */
 	usart_init(9600);
+	usart_tx_str("USART initialised.\n\r");
 	
 	/* Init adc with prescaler */
 	adc_init(ADC_PS_128);
 
-	usart_tx_str("Setup complete.\n\r");
 
 	/* Setup lcd */
 	lcd_init();
 
 	/* Print on top row */
 	char *msg = "hello, my friend";
-	lcd_println(msg, strlen(msg), LCD_TOP_ROW);
+	lcd_println(msg, LCD_TOP_ROW);
 
 	/* wait */
 	_delay_ms(2000);
@@ -37,8 +37,8 @@ int main(void)
 	lcd_shift_down();
 
 	/* Print on top row */
-	char *next = "My name is Luke";
-	lcd_println(next, strlen(next), LCD_TOP_ROW);
+	char *next = "my name is Luke";
+	lcd_println(next, LCD_TOP_ROW);
 
 	uint16_t adc_value;
 
