@@ -28,7 +28,7 @@ int main(void)
 
 	/* Print on top row */
 	char *msg = "hello, my friend";
-	lcd_println(msg, strlen(msg), 0);
+	lcd_println(msg, strlen(msg), LCD_TOP_ROW);
 
 	/* wait */
 	_delay_ms(2000);
@@ -38,7 +38,7 @@ int main(void)
 
 	/* Print on top row */
 	char *next = "My name is Luke";
-	lcd_println(next, strlen(next), 0);
+	lcd_println(next, strlen(next), LCD_TOP_ROW);
 
 	uint16_t adc_value;
 

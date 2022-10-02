@@ -61,9 +61,9 @@ static void lcd_send(uint8_t byte, uint8_t rs)
 }
 
 
-void lcd_println(char *str, uint8_t len, uint8_t line)
+void lcd_println(char *str, uint8_t len, uint8_t row)
 {
-	if (line) {
+	if (row) {
 		lcd_send((0x80 | 0x40), LOW);
 		len_bot = 0;
 	} else {
@@ -76,7 +76,7 @@ void lcd_println(char *str, uint8_t len, uint8_t line)
 	while (i < len) {
 		lcd_send(c, HIGH);
 
-		if (line) {
+		if (row) {
 			lcd_cur_state_bot[i] = c;
 			len_bot++;
 		} else {
@@ -97,7 +97,7 @@ void lcd_shift_down(void)
 	_delay_ms(2);
 
 	/* Print top into bottom */
-	lcd_println(lcd_cur_state_top, len_top, 1);
+	lcd_println(lcd_cur_state_top, len_top, LCD_TOP_ROW);
 
 	len_bot = len_top;
 	len_top = 0;
