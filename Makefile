@@ -7,7 +7,7 @@ MCU = atmega328p
 USART_FORMAT = 8-N-1
 
 # Directories
-INCLUDE_DIRS = include
+INCLUDE_DIRS = include/
 LIB_DIRS = $(INCLUDE_DIRS)
 BUILD_DIR = build
 OBJ_DIR = $(BUILD_DIR)/obj
@@ -16,14 +16,15 @@ SRC_DIR = src
 # Files
 TARGET = $(BUILD_DIR)/app
 
-SOURCES =	\
-	usart.c	\
-	pwm.c	\
-	adc.c	\
+SOURCES = \
+	usart.c \
+	pwm.c \
+	adc.c \
+	lcd1602a.c \
 	main.c
 
 OBJECT_NAMES = $(SOURCES:.c=.o)
-OBJECTS = $(addprefix $(OBJ_DIR),$(OBJECT_NAMES))
+OBJECTS = $(addprefix $(OBJ_DIR)/,$(OBJECT_NAMES))
 
 # Toolchain
 CC = avr-gcc
@@ -31,7 +32,7 @@ OBJCP = avr-objcopy
 AVRDUDE = sudo avrdude
 
 # Flags
-WFLAGS = -Wall -Wextra -Werror -Wshadow -Wpointer-arith		\
+WFLAGS = -Wall -Wextra -Wshadow -Wpointer-arith		\
 		 -Wbad-function-cast -Wcast-align -Wsign-compare	\
 		 -Waggregate-return -Wstrict-prototypes				\
 		 -Wmissing-prototypes -Wmissing-declarations		\
