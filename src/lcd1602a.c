@@ -7,6 +7,16 @@
 #define LOW		0
 
 
+/*
+ * Buffer containing the current state of the LCD
+ * First 16 for top row and last for bottom
+ */
+static char lcd_cur_state_top[16];
+static char lcd_cur_state_bot[16];
+static uint8_t len_top;
+static uint8_t len_bot;
+
+
 static void lcd_set_rs(uint8_t state)
 {
 	if (state) {
@@ -15,6 +25,7 @@ static void lcd_set_rs(uint8_t state)
 		PORTD &= ~(1 << PD2);
 	}
 }
+
 
 static void lcd_pulse_en(void)
 {
@@ -50,6 +61,49 @@ static void lcd_send(uint8_t byte, uint8_t rs)
 }
 
 
+void lcd_println(char *str, uint8_t len, uint8_t line)
+{
+	if (line) {
+		lcd_send((0x80 | 0x40), LOW);
+		len_bot = 0;
+	} else {
+		lcd_send((0x80 | 0x00), LOW);
+		len_top = 0;
+	}
+
+	int i = 0;
+	char c = *str;
+	while (i < len) {
+		lcd_send(c, HIGH);
+
+		if (line) {
+			lcd_cur_state_bot[i] = c;
+			len_bot++;
+		} else {
+			lcd_cur_state_top[i] = c;
+			len_top++;
+		}
+
+		c = *(++str);
+		i++;
+	}
+}
+
+
+void lcd_shift_down(void)
+{
+	/* Clear LCD */
+	lcd_send(0x01, LOW);
+	_delay_ms(2);
+
+	/* Print top into bottom */
+	lcd_println(lcd_cur_state_top, len_top, 1);
+
+	len_bot = len_top;
+	len_top = 0;
+}
+
+
 void lcd_init(void)
 {
 	/* Set RS, E and 4 data pins to output */
@@ -74,7 +128,7 @@ void lcd_init(void)
     /* Set to 4 bit mode */
     lcd_write_4bits(0x02);
 
-	/* Display on, cursor on, blink on */
+	/* Display on, cursor on, blink off */
 	lcd_send(0x0E, LOW);
 
 	/* Entry mode */
@@ -83,19 +137,4 @@ void lcd_init(void)
 	/* Clear display */
 	lcd_send(0x01, LOW);
 	_delay_ms(2);
-
-	/* Return home */
-	lcd_send(0x02, LOW);
-	_delay_ms(2);
-
-	char *str = "Hello, world!";
-	char c = *str;
-	while (c) {
-		lcd_send(c, HIGH);
-		
-		/* Next char */
-		c = *(++str);
-
-		_delay_ms(500);
-	}
 }

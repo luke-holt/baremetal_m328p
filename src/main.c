@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <avr/io.h>
 
 #include <util/delay.h>
@@ -21,7 +23,22 @@ int main(void)
 
 	usart_tx_str("Setup complete.\n\r");
 
+	/* Setup lcd */
 	lcd_init();
+
+	/* Print on top row */
+	char *msg = "hello, my friend";
+	lcd_println(msg, strlen(msg), 0);
+
+	/* wait */
+	_delay_ms(2000);
+
+	/* Shift top row down */
+	lcd_shift_down();
+
+	/* Print on top row */
+	char *next = "My name is Luke";
+	lcd_println(next, strlen(next), 0);
 
 	uint16_t adc_value;
 
