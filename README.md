@@ -17,7 +17,11 @@ The `avr-gcc` toolchain is used along with `avrdude`.
     	- [x] Spend least amount of time in ISR. Set flag and leave. (Event system)
 	- [ ] PWM
 	- [ ] ADC
-- [ ] Create examples directory
+- [ ] Refactor project structure to support multiple applications
+	- [ ] Create examples dirs
+	- [ ] Create apps dir
+    	- [ ] Refactor makefile to support this new configuration
+    	- [ ] Add makefiles for each app
 - [ ] Add wiring diagram
 - [ ] Add error system
 - [x] Implement event system
