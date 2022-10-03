@@ -1,122 +1,110 @@
 #include <stdlib.h>
+#include <stdint.h>
+
+/* TODO: REMOVE */
+#include <avr/io.h>
+#include <util/delay.h>
 
 #include "event.h"
 
 
 #define WATCHLIST_MAX	8
 
-#define MASK0			0x01
-#define MASK1			0x02
-#define MASK2			0x04
-#define MASK3			0x08
-#define MASK4			0x10
-#define MASK5			0x20
-#define MASK6			0x40
-#define MASK7			0x80
 
-
-static struct event_group {
+typedef struct event_group_t {
 	uint8_t *flag_reg;
-	uint8_t *cbs[8];
-} event_group;
+	event_handler_t handler;
+} event_group_t;
 
 
-static uint8_t *watchlist[WATCHLIST_MAX]
-static uint8_t wl_i;
+static event_group_t *watchlist[WATCHLIST_MAX];
+static uint8_t wl_i = 0;
 
 
 static uint8_t not_in_regs(uint8_t *reg)
 {
 	/* empty watchlist */
-	if (wl_i == NULL) {
+	if (wl_i == 0) {
 		return 1;
 	}
 
 	/* Check existing members */
 	for (int i = 0; i < wl_i; i++) {
-		if (watchlist[i]->flag_reg == reg) {
+		event_group_t *cur = watchlist[i];
+		if (cur->flag_reg == reg) {
 			return 0;
 		}
 	}
 
+	/* Not in list */
 	return 1;
 }
 
-/**
- * @brief Get group from watchlist[]. If group doesn't exist,
- * create new one and return it.
- * 
- * @param reg
- * @return event_group* 
- */
-static event_group *get_grp(uint8_t *reg)
+
+static void new_grp(uint8_t *reg, event_handler_t handler)
 {
-	/* empty watchlist */
-	if (wl_i == NULL) {
-		return NULL;
-	}
-
-	for (int i = 0; i < wl_i; i++) {
-		event_group *cur = (event_group *)watchlist[i];
-		if (cur->flag_reg == reg) {
-			return cur;
-		}
-	}
-
-	event_group *grp = (event_group *)malloc(sizeof(event_group));
+	event_group_t *grp = malloc(sizeof(event_group_t));
 	grp->flag_reg = reg;
+	grp->handler = handler;
 
 	/* Add new group to watchlist and increment index */
 	watchlist[wl_i] = grp;
 	wl_i++;
-
-	return grp;
 }
 
 
-void event_register_cb(uint8_t *reg, uint8_t bit, void (*callback)(void))
+void event_handler_register(uint8_t *flag_byte, event_handler_t handler)
 {
-	if (bit >= 8) {
-		/* TODO: ERROR: Can only have 8 flags in one byte */
-		return;
+	if (not_in_regs(flag_byte)) {
+		new_grp(flag_byte, handler);
+	} else {
+		/* TODO: ERROR: callback already registered for this flag byte. */
 	}
-
-	event_group *grp = get_grp(reg);
-	grp->cbs[bit] = callback;
 }
 
 
-static inline void do_cb(event_group *grp, uint8_t bit)
+static void exec_cbs(event_group_t *grp)
 {
-	if (grp->flag_reg == 0x00) {
-		return;
-	}
+	/* Check each bit */
+	for (int bit = 0; bit < 8; bit++) {
 
-	/* if the bit is set in the flag register, exec the cb */
-	if ((*grp->flag_reg & (1 << bit)) == (1 << bit)) {
-		grp->cbs[bit]();
-		
-		/* Clear flag */
-		*grp->flag_reg &= ~(1 << bit);
+		uint8_t mask = (1 << bit);
+
+		/* Check if flag is set */
+		if ((*(grp->flag_reg) & mask) == mask) {
+
+			/* Exec handler */
+			grp->handler(mask);
+
+			/* Clear the flag */
+			*(grp->flag_reg) &= ~mask;
+
+			/* No more flags in reg? */
+			if (*(grp->flag_reg) == 0) {
+				break;
+			}
+		}
 	}
 }
 
 
 void event_loop_start(void)
 {
+	DDRB |= (1 << DDB4);
+
 	while (1) {
-		event_group *cur;
+		event_group_t *cur;
 		for (int i = 0; i < wl_i; i++) {
-			cur = (event_group *)watchlist[i];
+
+			cur = watchlist[i];
 
 			/* If true, there is at least one flag set */
-			if (*cur->flag_reg != 0) {
-				/* Check every bit */
-				for (int i = 0; i < 8; i++) {
-					do_cb(cur, i);
-					/* If 0, no more flags */
-					if (*cur->flag_reg == 0) break;
-				}
+			if (*(cur->flag_reg) > 0) {
+				PORTB |= (1 << PB4);
+				_delay_ms(10);
+				PORTB &= ~(1 << PB4);
+
+				exec_cbs(cur);
 			}
 		}
 	}

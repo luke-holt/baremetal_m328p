@@ -21,6 +21,7 @@ SOURCES = \
 	pwm.c \
 	adc.c \
 	lcd1602a.c \
+	event.c \
 	main.c
 
 OBJECT_NAMES = $(SOURCES:.c=.o)

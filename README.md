@@ -14,10 +14,11 @@ The `avr-gcc` toolchain is used along with `avrdude`.
 - [x] Refactor Makefile to be scalable
 - [ ] Refactor current HAL to be interrupt driven
 	- [x] USART
-    	- [ ] Spend least amount of time in ISR. Set flag and leave. (Event system)
+    	- [x] Spend least amount of time in ISR. Set flag and leave. (Event system)
 	- [ ] PWM
 	- [ ] ADC
 - [ ] Create examples directory
 - [ ] Add wiring diagram
 - [ ] Add error system
-- [ ] Implement event system
+- [x] Implement event system
+  - Implemented basic even system where an event loop checks the registered groups for flags and calls the associated handler.
