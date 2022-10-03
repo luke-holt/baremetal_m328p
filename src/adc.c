@@ -1,5 +1,4 @@
 #include <avr/io.h>
-#include <util/delay_basic.h>
 
 #include "adc.h"
 
