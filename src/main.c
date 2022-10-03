@@ -19,7 +19,6 @@ int main(void)
 	
 	/* Init usart with baud rate */
 	usart_init(9600);
-	usart_tx_str("USART initialised.\n\r");
 	
 	/* Init adc with prescaler */
 	// adc_init(ADC_PS_128);
@@ -41,6 +40,8 @@ int main(void)
 	/* Print on top row */
 	char *next = "my name is Luke";
 	lcd_println(next, LCD_TOP_ROW);
+
+	usart_tx_str("Setup complete.\n\r");
 
 	/*
 	uint16_t adc_value;

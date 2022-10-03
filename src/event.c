@@ -90,8 +90,6 @@ static void exec_cbs(event_group_t *grp)
 
 void event_loop_start(void)
 {
-	DDRB |= (1 << DDB4);
-
 	while (1) {
 		event_group_t *cur;
 		for (int i = 0; i < wl_i; i++) {
@@ -100,10 +98,6 @@ void event_loop_start(void)
 
 			/* If true, there is at least one flag set */
 			if (*(cur->flag_reg) > 0) {
-				PORTB |= (1 << PB4);
-				_delay_ms(10);
-				PORTB &= ~(1 << PB4);
-
 				exec_cbs(cur);
 			}
 		}
