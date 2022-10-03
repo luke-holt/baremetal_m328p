@@ -13,9 +13,11 @@ The `avr-gcc` toolchain is used along with `avrdude`.
 	- [ ] ...
 - [x] Refactor Makefile to be scalable
 - [ ] Refactor current HAL to be interrupt driven
-	- [ ] USART
+	- [x] USART
+    	- [ ] Spend least amount of time in ISR. Set flag and leave. (Event system)
 	- [ ] PWM
 	- [ ] ADC
 - [ ] Create examples directory
 - [ ] Add wiring diagram
 - [ ] Add error system
+- [ ] Implement event system
