@@ -1,9 +1,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-/* TODO: REMOVE */
-#include <util/delay.h>
-
 #include "event.h"
 
 #include "usart.h"

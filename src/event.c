@@ -1,10 +1,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-/* TODO: REMOVE */
-#include <avr/io.h>
-#include <util/delay.h>
-
 #include "event.h"
 
 
@@ -93,7 +89,6 @@ void event_loop_start(void)
 	while (1) {
 		event_group_t *cur;
 		for (int i = 0; i < wl_i; i++) {
-
 			cur = watchlist[i];
 
 			/* If true, there is at least one flag set */
