@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 #include <util/delay.h>
 
@@ -14,6 +15,21 @@
 
 
 static usart_driver_api_t usart;
+
+
+ISR (USART_RX_vect)
+{
+	uint8_t d;
+	usart.rx_byte(&d);
+	usart.tx_byte(d);
+
+	DDRB |= (1 << DDB3);
+
+	PORTB |= (1 << PB3);
+	_delay_ms(1);
+	PORTB &= ~(1 << PB3);
+}
+
 
 static void print(char *str)
 {
@@ -31,9 +47,13 @@ int main(void)
 
 	usart.set_baudrate(9600);
 	usart.set_frame_cfg(0, 0, 0);
+	usart.set_int_enable(1);
 	usart.enable();
 
-	print("hello, world\n\r");
+	/* Globally enable interrupts */
+	sei();
+
+	// print("hello, world\n\r");
 
 	pwm_init();
 	adc_init(ADC_PS_128);

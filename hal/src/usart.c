@@ -9,7 +9,7 @@
 #define USART_MAX_BAUD			1000000
 
 
-static void set_baudrate(int baud_rate)
+static inline void set_baudrate(int baud_rate)
 {
 	UBRR0 = UBRR2BAUD(baud_rate);
 }
@@ -91,18 +91,19 @@ static void set_int_enable(uint8_t en)
 		UCSR0B &= ~((1 << RXCIE0) | (1 << TXCIE0) | (1 << UDRIE0));
 		return;
 	}
+
 	/* TODO: ERROR: enable must be a 1 or 0 */
 }
 
 
-static void enable(void)
+static inline void enable(void)
 {
 	/* Enable transmitter, receiver */
 	UCSR0B |= (1 << RXEN0) | (1 << TXEN0);
 }
 
 
-static void tx_byte(uint8_t byte)
+static inline void tx_byte(uint8_t byte)
 {
 	/* Ensure data buffer empty */
 	while (!(UCSR0A & (1 << UDRE0)));
@@ -110,7 +111,7 @@ static void tx_byte(uint8_t byte)
 }
 
 
-static void rx_byte(uint8_t *byte)
+static inline void rx_byte(uint8_t *byte)
 {
 	/* Ensure receive complete */
 	while (!(UCSR0A & (1 << RXC0)));
