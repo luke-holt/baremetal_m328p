@@ -1,62 +1,35 @@
-#include <string.h>
-
-#include <avr/io.h>
-
-#include <util/delay.h>
-
-#include "event.h"
-
 #include "usart.h"
-#include "pwm.h"
-#include "adc.h"
-#include "lcd1602a.h"
+
+
+#define BAUDRATE	9600
 
 
 int main(void)
 {
-	/* Init pwm */
-	// pwm_init();
-	
-	/* Init usart with baud rate */
-	usart_init(9600);
-	
-	/* Init adc with prescaler */
-	// adc_init(ADC_PS_128);
+	/* Get the hal api instance */
+	usart_driver_api_t usart = usart_get_instance();
 
+	/* Set baud rate */
+	usart.set_baudrate(9600);
 
-	/* Setup lcd */
-	lcd_init();
+	/* Set frame configuration */
+	usart.set_frame_cfg(8, 0, 1);
+	/* OR */
+	// usart.set_frame_cfg(0, 0, 0);
+	/* ... to set default 8-N-1 */
 
-	/* Print on top row */
-	char *msg = "hello, my friend";
-	lcd_println(msg, LCD_TOP_ROW);
+	/* Enable transmitter and receiver */
+	usart.enable();
 
-	/* wait */
-	// _delay_ms(2000);
-
-	/* Shift top row down */
-	lcd_shift_down();
-
-	/* Print on top row */
-	char *next = "my name is Luke";
-	lcd_println(next, LCD_TOP_ROW);
-
-	usart_tx_str("Setup complete.\n\r");
-
-	/*
-	uint16_t adc_value;
-
+	uint8_t c;
 	while (1) {
-		adc_read(&adc_value);
+		/* Receive byte */
+		usart.rx_byte(&c);
 
-		double dc = adc_value * 100.0 / 1023.0;
-		int d = (int)dc;
+		/* increment it */
+		c++;
 
-		pwm_set_dc(d);
+		/* Send it back */
+		usart.tx_byte(c);
 	}
-	*/
-
-	event_loop_start();
-
-	return 0;
 }
