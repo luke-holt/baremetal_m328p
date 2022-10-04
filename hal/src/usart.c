@@ -78,17 +78,20 @@ static void set_frame_cfg(uint8_t n_data, uint8_t n_parity, uint8_t n_stop)
 }
 
 
-static void int_enable(uint8_t en)
+static void set_int_enable(uint8_t en)
 {
 	if (en == 1) {
 		/* Enable RX complete, TX complete and empty data register interrupts */
-		UCSR0B |= (1 << RXCIE0) | (1 << TXCIE0) | (1 << UDRIE0);
-	} else if (en == 0) {
+		UCSR0B |= (1 << RXCIE0)/* | (1 << TXCIE0) | (1 << UDRIE0)*/;
+		return;
+	}
+	
+	if (en == 0) {
 		/* Disable */
 		UCSR0B &= ~((1 << RXCIE0) | (1 << TXCIE0) | (1 << UDRIE0));
-	} else {
-		/* TODO: ERROR: enable must be a 1 or 0 */
+		return;
 	}
+	/* TODO: ERROR: enable must be a 1 or 0 */
 }
 
 
@@ -120,7 +123,7 @@ usart_driver_api_t usart_get_instance(void)
 	usart_driver_api_t api = {
 		.set_baudrate = set_baudrate,
 		.set_frame_cfg = set_frame_cfg,
-		.int_enable = int_enable,
+		.set_int_enable = set_int_enable,
 		.enable = enable,
 		.tx_byte = tx_byte,
 		.rx_byte = rx_byte,

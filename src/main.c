@@ -1,35 +1,58 @@
+#include <string.h>
+
+#include <avr/io.h>
+
+#include <util/delay.h>
+
+/* New hal */
 #include "usart.h"
 
+/* Old hal */
+#include "pwm.h"
+#include "adc.h"
+#include "lcd1602a.h"
 
-#define BAUDRATE	9600
+
+static usart_driver_api_t usart;
+
+static void print(char *str)
+{
+	char c = *str;
+	while (c) {
+		usart.tx_byte(c);
+		c = *(++str);
+	}
+}
 
 
 int main(void)
 {
-	/* Get the hal api instance */
-	usart_driver_api_t usart = usart_get_instance();
+	usart = usart_get_instance();
 
-	/* Set baud rate */
 	usart.set_baudrate(9600);
-
-	/* Set frame configuration */
-	usart.set_frame_cfg(8, 0, 1);
-	/* OR */
-	// usart.set_frame_cfg(0, 0, 0);
-	/* ... to set default 8-N-1 */
-
-	/* Enable transmitter and receiver */
+	usart.set_frame_cfg(0, 0, 0);
 	usart.enable();
 
-	uint8_t c;
+	print("hello, world\n\r");
+
+	pwm_init();
+	adc_init(ADC_PS_128);
+	lcd_init();
+
+	lcd_println("hello, friend", LCD_TOP_ROW);
+	_delay_ms(2000);
+	lcd_shift_down();
+	lcd_println("my name is Luke", LCD_TOP_ROW);
+
+	uint16_t adc_value;
 	while (1) {
-		/* Receive byte */
-		usart.rx_byte(&c);
+		adc_read(&adc_value);
 
-		/* increment it */
-		c++;
+		double dc = adc_value * 100.0 / 1023.0;
+		int d = (int)dc;
 
-		/* Send it back */
-		usart.tx_byte(c);
+		pwm_set_dc(d);
 	}
+
+	return 0;
 }
