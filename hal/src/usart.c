@@ -20,7 +20,7 @@ static void set_frame_cfg(
 	usart_parity_mode_t parity,
 	usart_nstop_bits_t nstop)
 {
-	if ((n_data + n_parity + n_stop) == 0) {
+	if ((ndata + parity + nstop) == 0) {
 		/*
 		 * Set defaults (8-N-1)
 		 * 8 data, no parity, 1 stop.
@@ -28,16 +28,16 @@ static void set_frame_cfg(
 		UCSR0C |= (3 << UCSZ00);
 	}
 
-	switch (n_data) {
-	case 5:
+	switch (ndata) {
+	case USART_NDATA_5:
 	 	break;
-	case 6:
+	case USART_NDATA_6:
 		UCSR0C |= (1 << UCSZ00);
 		break;
-	case 7:
+	case USART_NDATA_7:
 		UCSR0C |= (2 << UCSZ00);
 		break;
-	case 8:
+	case USART_NDATA_8:
 		UCSR0C |= (3 << UCSZ00);
 		break;
 	default:
@@ -45,30 +45,25 @@ static void set_frame_cfg(
 		break;
 	}
 
-	switch (n_parity) {
-	case 0:
-		/* No parity */
+	switch (parity) {
+	case USART_PARITY_DISABLED:
 		UCSR0C &= ~((1 << UPM00) | (1 << UPM01));
 		break;
-	case 1:
-		/* Even parity */
+	case USART_PARITY_EVEN:
 		UCSR0C |= (2 << UPM00);
 		break;
-	case 2:
-		/* Odd parity */
+	case USART_PARITY_ODD:
 		UCSR0C |= (3 << UPM00);
 	default:
 		/* TODO: ERROR, n_parity not sup */
 		break;
 	}
 
-	switch (n_stop) {
-	case 1:
-		/* 1 stop bit */
+	switch (nstop) {
+	case USART_NSTOP_1:
 		UCSR0C &= ~(1 << USBS0);
 		break;
-	case 2:
-		/* 2 stop bit */
+	case USART_NSTOP_2:
 		UCSR0C |= (1 << USBS0);
 		break;
 	default:
