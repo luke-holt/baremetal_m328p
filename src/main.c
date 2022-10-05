@@ -40,7 +40,10 @@ int main(void)
 	usart = usart_get_inst();
 
 	usart.set_baudrate(9600);
-	usart.set_frame_cfg(0, 0, 0);
+	usart.set_frame_cfg(
+		USART_NDATA_8,
+		USART_PARITY_DISABLED,
+		USART_NSTOP_1);
 	usart.set_int_enable(1);
 	usart.enable();
 

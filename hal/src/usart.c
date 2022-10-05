@@ -15,7 +15,10 @@ static inline void set_baudrate(int baud_rate)
 }
 
 
-static void set_frame_cfg(uint8_t n_data, uint8_t n_parity, uint8_t n_stop)
+static void set_frame_cfg(
+	usart_ndata_bits_t ndata,
+	usart_parity_mode_t parity,
+	usart_nstop_bits_t nstop)
 {
 	if ((n_data + n_parity + n_stop) == 0) {
 		/*

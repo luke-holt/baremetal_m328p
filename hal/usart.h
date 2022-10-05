@@ -1,8 +1,32 @@
 #include <stdint.h>
 
 
+typedef enum {
+	USART_NDATA_5,
+	USART_NDATA_6,
+	USART_NDATA_7,
+	USART_NDATA_8,
+} usart_ndata_bits_t;
+
+
+typedef enum {
+	USART_PARITY_DISABLED,
+	USART_PARITY_EVEN = 2,
+	USART_PARITY_ODD,
+} usart_parity_mode_t;
+
+
+typedef enum {
+	USART_NSTOP_1,
+	USART_NSTOP_2,
+} usart_nstop_bits_t;
+
+
 typedef void (*usart_set_baudrate_t)(int baud_rate);
-typedef void (*usart_frame_cfg_t)(uint8_t n_data, uint8_t n_parity, uint8_t n_stop);
+typedef void (*usart_frame_cfg_t)(
+	usart_ndata_bits_t ndata,
+	usart_parity_mode_t parity,
+	usart_nstop_bits_t nstop);
 typedef void (*usart_set_int_en_t)(uint8_t en);
 typedef void (*usart_enable_t)(void);
 typedef void (*usart_tx_byte_t)(uint8_t byte);
