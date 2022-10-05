@@ -3,7 +3,8 @@ HAL_OBJ_DIR = $(OBJ_DIR)/hal
 HAL_SRC_DIR = hal/src
 
 HAL_SOURCES = \
-	usart.c
+	usart.c \
+	adc.c
 
 HAL_OBJECT_NAMES = $(HAL_SOURCES:.c=.o)
 

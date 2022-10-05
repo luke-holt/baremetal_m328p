@@ -15,6 +15,7 @@
 
 
 static usart_driver_api_t usart;
+static adc_driver_api_t adc;
 
 
 ISR (USART_RX_vect)
@@ -31,42 +32,35 @@ ISR (USART_RX_vect)
 }
 
 
-static void print(char *str)
-{
-	char c = *str;
-	while (c) {
-		usart.tx_byte(c);
-		c = *(++str);
-	}
-}
-
-
 int main(void)
 {
-	usart = usart_get_instance();
+	/* Globally enable interrupts */
+	sei();
+
+	usart = usart_get_inst();
 
 	usart.set_baudrate(9600);
 	usart.set_frame_cfg(0, 0, 0);
 	usart.set_int_enable(1);
 	usart.enable();
 
-	/* Globally enable interrupts */
-	sei();
+	adc = adc_get_inst();
 
-	// print("hello, world\n\r");
+	adc.set_prescaler(ADC_PS_128);
+	adc.set_int_enable(0);
+	adc.enable();
+
 
 	pwm_init();
-	adc_init(ADC_PS_128);
 	lcd_init();
 
 	lcd_println("hello, friend", LCD_TOP_ROW);
-	_delay_ms(2000);
 	lcd_shift_down();
 	lcd_println("my name is Luke", LCD_TOP_ROW);
 
 	uint16_t adc_value;
 	while (1) {
-		adc_read(&adc_value);
+		adc.read(ADC_CH2, &adc_value);
 
 		double dc = adc_value * 100.0 / 1023.0;
 		int d = (int)dc;

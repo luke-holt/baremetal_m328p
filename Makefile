@@ -18,7 +18,6 @@ TARGET = $(BUILD_DIR)/app
 
 SOURCES = \
 	pwm.c \
-	adc.c \
 	lcd1602a.c \
 	event.c \
 	main.c

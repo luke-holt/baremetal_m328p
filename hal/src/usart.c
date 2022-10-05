@@ -119,7 +119,7 @@ static inline void rx_byte(uint8_t *byte)
 }
 
 
-usart_driver_api_t usart_get_instance(void)
+usart_driver_api_t usart_get_inst(void)
 {
 	usart_driver_api_t api = {
 		.set_baudrate = set_baudrate,
