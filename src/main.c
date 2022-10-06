@@ -1,9 +1,11 @@
-#include <string.h>
+#include <stdlib.h>
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
 #include <util/delay.h>
+
+#include "event_msg.h"
 
 /* New hal */
 #include "usart.h"
@@ -15,25 +17,38 @@
 
 
 static usart_driver_api_t usart;
+static int usart_grpno;
+
 static adc_driver_api_t adc;
 
 
 ISR (USART_RX_vect)
 {
-	uint8_t d;
-	usart.rx_byte(&d);
-	usart.tx_byte(d);
+	event_msg_t *msg = malloc(sizeof(msg));
+	msg->grpno = usart_grpno;
+	msg->eventno = 0;
+	msg->ctx = malloc(sizeof(uint8_t));
 
-	DDRB |= (1 << DDB3);
+	usart.rx_byte(msg->ctx);
 
-	PORTB |= (1 << PB3);
-	_delay_ms(1);
-	PORTB &= ~(1 << PB3);
+	event_enqueue(msg);
+}
+
+
+static void usart_handler(event_msg_t *msg)
+{
+	char *x = (char *)(msg->ctx);
+	usart.tx_byte(*x);
+
+	free(x);
+	free(msg);
 }
 
 
 int main(void)
 {
+	usart_grpno = event_register_group(&usart_handler);
+
 	/* Globally enable interrupts */
 	sei();
 
@@ -47,6 +62,9 @@ int main(void)
 	usart.set_int_enable(1);
 	usart.enable();
 
+	event_begin_loop();
+
+	/*
 	adc = adc_get_inst();
 
 	adc.set_prescaler(ADC_PS_128);
@@ -70,6 +88,7 @@ int main(void)
 
 		pwm_set_dc(d);
 	}
+	*/
 
 	return 0;
 }

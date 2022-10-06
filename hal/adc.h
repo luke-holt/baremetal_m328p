@@ -31,7 +31,7 @@ typedef void (*adc_trig_conv_t)(void);
 typedef void (*adc_read_t)(adc_channel_t ch, uint16_t *value);
 
 
-typedef struct adc_driver_api_t {
+typedef struct {
 
 	adc_set_prescaler_t set_prescaler;
 	adc_set_int_enable_t set_int_enable;

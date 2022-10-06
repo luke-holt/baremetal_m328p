@@ -34,7 +34,7 @@ typedef void (*usart_rx_byte_t)(uint8_t *byte);
 
 
 /* TODO: DOCS: Write documentation for api fns */
-typedef struct usart_driver_api_t {
+typedef struct {
 
 	usart_set_baudrate_t set_baudrate;
 	usart_frame_cfg_t set_frame_cfg;

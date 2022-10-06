@@ -13,8 +13,8 @@ The `avr-gcc` toolchain is used along with `avrdude`.
   - [x] USART
   - [ ] PWM
 	- [ ] Pin select for PWM out
-  - [ ] ADC
-	- [ ] adc i/o select
+  - [x] ADC
+	- [x] adc i/o select
 - [ ] Refactor project structure to support multiple applications
 	- [x] Create examples dirs
 	- [ ] Create apps dir
@@ -22,3 +22,5 @@ The `avr-gcc` toolchain is used along with `avrdude`.
     	- [ ] Add makefiles for each app
 - [ ] Add wiring diagram
 - [ ] Add error system
+- [x] Refactor event system to implement a message queue instead of monitoring a set of registered bytes for event flags.
+	- [x] Add queue implementation

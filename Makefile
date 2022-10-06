@@ -19,7 +19,7 @@ TARGET = $(BUILD_DIR)/app
 SOURCES = \
 	pwm.c \
 	lcd1602a.c \
-	event.c \
+	event_msg.c \
 	main.c
 
 OBJECT_NAMES = $(SOURCES:.c=.o)
