@@ -9,10 +9,10 @@
 
 /* New hal */
 #include "usart.h"
-
-/* Old hal */
 #include "pwm.h"
 #include "adc.h"
+
+/* Old hal */
 #include "lcd1602a.h"
 
 
@@ -20,6 +20,7 @@ static usart_driver_api_t usart;
 static int usart_grpno;
 
 static adc_driver_api_t adc;
+static int adc_grpno;
 
 
 ISR (USART_RX_vect)
@@ -35,19 +36,43 @@ ISR (USART_RX_vect)
 }
 
 
+ISR (ADC_vect)
+{
+	event_msg_t *msg = malloc(sizeof(msg));
+	msg->grpno = adc_grpno;
+	msg->eventno = 0;
+	msg->ctx = malloc(sizeof(uint16_t));
+
+	adc.read(ADC_CH2, msg->ctx);
+
+	event_enqueue(msg);
+}
+
+
 static void usart_handler(event_msg_t *msg)
 {
 	char *x = (char *)(msg->ctx);
 	usart.tx_byte(*x);
+}
 
-	free(x);
-	free(msg);
+
+static void adc_handler(event_msg_t *msg)
+{
+	uint16_t *val = (uint16_t *)(msg->ctx);
+
+	double dc = *val * 100.0 / 1023.0;
+	int d = (int)dc;
+
+	pwm_update_dc(PWM_PIN_PB1, d);
+
+	adc.trig_conv();
 }
 
 
 int main(void)
 {
 	usart_grpno = event_register_group(&usart_handler);
+	adc_grpno = event_register_group(&adc_handler);
 
 	/* Globally enable interrupts */
 	sei();
@@ -62,33 +87,22 @@ int main(void)
 	usart.set_int_enable(1);
 	usart.enable();
 
-	event_begin_loop();
 
-	/*
 	adc = adc_get_inst();
 
 	adc.set_prescaler(ADC_PS_128);
-	adc.set_int_enable(0);
+	adc.set_int_enable(1);
 	adc.enable();
 
+	pwm_init(PWM_PIN_PB1);
 
-	pwm_init();
 	lcd_init();
 
 	lcd_println("hello, friend", LCD_TOP_ROW);
 	lcd_shift_down();
 	lcd_println("my name is Luke", LCD_TOP_ROW);
 
-	uint16_t adc_value;
-	while (1) {
-		adc.read(ADC_CH2, &adc_value);
-
-		double dc = adc_value * 100.0 / 1023.0;
-		int d = (int)dc;
-
-		pwm_set_dc(d);
-	}
-	*/
+	event_begin_loop();
 
 	return 0;
 }

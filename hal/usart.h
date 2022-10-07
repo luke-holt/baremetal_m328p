@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 
-typedef enum {
+typedef enum usart_ndata_bits_t {
 	USART_NDATA_5,
 	USART_NDATA_6,
 	USART_NDATA_7,
@@ -9,14 +9,14 @@ typedef enum {
 } usart_ndata_bits_t;
 
 
-typedef enum {
+typedef enum usart_parity_mode_t {
 	USART_PARITY_DISABLED,
 	USART_PARITY_EVEN = 2,
 	USART_PARITY_ODD,
 } usart_parity_mode_t;
 
 
-typedef enum {
+typedef enum usart_nstop_bits_t {
 	USART_NSTOP_1,
 	USART_NSTOP_2,
 } usart_nstop_bits_t;
@@ -34,7 +34,7 @@ typedef void (*usart_rx_byte_t)(uint8_t *byte);
 
 
 /* TODO: DOCS: Write documentation for api fns */
-typedef struct {
+typedef struct usart_driver_api_t {
 
 	usart_set_baudrate_t set_baudrate;
 	usart_frame_cfg_t set_frame_cfg;

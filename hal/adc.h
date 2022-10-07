@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 
-typedef enum {
+typedef enum adc_prescaler_t {
 	ADC_PS_2 = 1,
 	ADC_PS_4,
 	ADC_PS_8,
@@ -12,7 +12,7 @@ typedef enum {
 } adc_prescaler_t;
 
 
-typedef enum {
+typedef enum adc_channel_t {
 	ADC_CH0,
 	ADC_CH1,
 	ADC_CH2,
@@ -31,7 +31,7 @@ typedef void (*adc_trig_conv_t)(void);
 typedef void (*adc_read_t)(adc_channel_t ch, uint16_t *value);
 
 
-typedef struct {
+typedef struct adc_driver_api_t {
 
 	adc_set_prescaler_t set_prescaler;
 	adc_set_int_enable_t set_int_enable;

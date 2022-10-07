@@ -4,7 +4,8 @@ HAL_SRC_DIR = hal/src
 
 HAL_SOURCES = \
 	usart.c \
-	adc.c
+	adc.c \
+	pwm.c
 
 HAL_OBJECT_NAMES = $(HAL_SOURCES:.c=.o)
 

@@ -17,7 +17,6 @@ SRC_DIR = src
 TARGET = $(BUILD_DIR)/app
 
 SOURCES = \
-	pwm.c \
 	lcd1602a.c \
 	event_msg.c \
 	main.c

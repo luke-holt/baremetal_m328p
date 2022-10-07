@@ -54,6 +54,9 @@ void process_msg(void)
 
 	/* Call associated handler */
 	handlers[msg->grpno](msg);
+
+	free(msg->ctx);
+	free(msg);
 }
 
 

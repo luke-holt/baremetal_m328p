@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 
-typedef struct {
+typedef struct event_msg_t {
 
 	uint8_t grpno;
 	uint8_t eventno;
