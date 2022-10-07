@@ -9,18 +9,18 @@ The `avr-gcc` toolchain is used along with `avrdude`.
 - [ ] Add 1602a LCD support
 	- [x] Achieve working example.
 	- [ ] Propper command API.
-- [ ] Refactor HAL API
+- [x] Refactor HAL API
   - [x] USART
-  - [ ] PWM
-	- [ ] Pin select for PWM out
+  - [x] PWM
+	- [x] Pin select for PWM out
   - [x] ADC
 	- [x] adc i/o select
 - [ ] Refactor project structure to support multiple applications
 	- [x] Create examples dirs
+		- [ ] Add wiring diagrams
 	- [ ] Create apps dir
     	- [ ] Refactor makefile to support this new configuration
     	- [ ] Add makefiles for each app
-- [ ] Add wiring diagram
 - [ ] Add error system
 - [x] Refactor event system to implement a message queue instead of monitoring a set of registered bytes for event flags.
 	- [x] Add queue implementation
