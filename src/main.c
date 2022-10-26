@@ -77,7 +77,11 @@ int main(void) {
   usart.set_frame_cfg(USART_NDATA_8, USART_PARITY_DISABLED, USART_NSTOP_1);
   usart.set_int_enable(1);
   usart.enable();
+<<<<<<< HEAD
   usart.tx_byte(0x41); /* A */
+=======
+  usart.tx_byte(0x20);
+>>>>>>> ef8c06344c992440e769629d76442eb25accc237
 
   /*
         adc = adc_get_inst();
