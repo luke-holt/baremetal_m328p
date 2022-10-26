@@ -1,20 +1,20 @@
 #include <stdlib.h>
 
-#include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/io.h>
 
 #include <util/delay.h>
 
 #include "event_msg.h"
 
 /* New hal */
-#include "usart.h"
-#include "pwm.h"
 #include "adc.h"
+#include "pwm.h"
+#include "spi.h"
+#include "usart.h"
 
 /* Old hal */
 #include "lcd1602a.h"
-
 
 static usart_driver_api_t usart;
 static int usart_grpno;
@@ -22,87 +22,98 @@ static int usart_grpno;
 static adc_driver_api_t adc;
 static int adc_grpno;
 
+static spi_driver_api_t spi;
+// static int spi_grpno;
 
-ISR (USART_RX_vect)
-{
-	event_msg_t *msg = malloc(sizeof(msg));
-	msg->grpno = usart_grpno;
-	msg->eventno = 0;
-	msg->ctx = malloc(sizeof(uint8_t));
+ISR(USART_RX_vect) {
+  event_msg_t *msg = malloc(sizeof(msg));
+  msg->grpno = usart_grpno;
+  msg->eventno = 0;
+  msg->ctx = malloc(sizeof(uint8_t));
 
-	usart.rx_byte(msg->ctx);
+  usart.rx_byte(msg->ctx);
 
-	event_enqueue(msg);
+  event_enqueue(msg);
 }
 
+ISR(ADC_vect) {
+  event_msg_t *msg = malloc(sizeof(msg));
+  msg->grpno = adc_grpno;
+  msg->eventno = 0;
+  msg->ctx = malloc(sizeof(uint16_t));
 
-ISR (ADC_vect)
-{
-	event_msg_t *msg = malloc(sizeof(msg));
-	msg->grpno = adc_grpno;
-	msg->eventno = 0;
-	msg->ctx = malloc(sizeof(uint16_t));
+  adc.read(ADC_CH2, msg->ctx);
 
-	adc.read(ADC_CH2, msg->ctx);
-
-	event_enqueue(msg);
+  event_enqueue(msg);
 }
 
-
-static void usart_handler(event_msg_t *msg)
-{
-	char *x = (char *)(msg->ctx);
-	usart.tx_byte(*x);
+static void usart_handler(event_msg_t *msg) {
+  char *x = (char *)(msg->ctx);
+  usart.tx_byte(*x);
 }
 
+static void adc_handler(event_msg_t *msg) {
+  uint16_t *val = (uint16_t *)(msg->ctx);
 
-static void adc_handler(event_msg_t *msg)
-{
-	uint16_t *val = (uint16_t *)(msg->ctx);
+  double dc = *val * 100.0 / 1023.0;
+  int d = (int)dc;
 
-	double dc = *val * 100.0 / 1023.0;
-	int d = (int)dc;
+  pwm_update_dc(PWM_PIN_PB1, d);
 
-	pwm_update_dc(PWM_PIN_PB1, d);
-
-	adc.trig_conv();
+  adc.trig_conv();
 }
 
+int main(void) {
+  /*
+        usart_grpno = event_register_group(&usart_handler);
+        adc_grpno = event_register_group(&adc_handler);
 
-int main(void)
-{
-	usart_grpno = event_register_group(&usart_handler);
-	adc_grpno = event_register_group(&adc_handler);
+        sei();
+  */
 
-	/* Globally enable interrupts */
-	sei();
+  usart = usart_get_inst();
 
-	usart = usart_get_inst();
+  usart.set_baudrate(9600);
+  usart.set_frame_cfg(USART_NDATA_8, USART_PARITY_DISABLED, USART_NSTOP_1);
+  usart.set_int_enable(1);
+  usart.enable();
+  usart.tx_byte(0x20);
 
-	usart.set_baudrate(9600);
-	usart.set_frame_cfg(
-		USART_NDATA_8,
-		USART_PARITY_DISABLED,
-		USART_NSTOP_1);
-	usart.set_int_enable(1);
-	usart.enable();
+  /*
+        adc = adc_get_inst();
 
+        adc.set_prescaler(ADC_PS_128);
+        adc.set_int_enable(1);
+        adc.enable();
 
-	adc = adc_get_inst();
+        pwm_init(PWM_PIN_PB1);
+  */
 
-	adc.set_prescaler(ADC_PS_128);
-	adc.set_int_enable(1);
-	adc.enable();
+  lcd_init();
 
-	pwm_init(PWM_PIN_PB1);
+  lcd_println("hello, friend", LCD_TOP_ROW);
+  lcd_shift_down();
+  lcd_println("my name is Luke", LCD_TOP_ROW);
 
-	lcd_init();
+  // event_begin_loop();
 
-	lcd_println("hello, friend", LCD_TOP_ROW);
-	lcd_shift_down();
-	lcd_println("my name is Luke", LCD_TOP_ROW);
+  spi = spi_get_inst();
+  spi.set_data_order(SPI_DORDER_MSB);
+  spi.set_clock_polarity(SPI_CPOL_0);
+  spi.set_clock_phase(SPI_CPHA_0);
+  spi.set_clock_rate(SPI_CRATE_128);
+  spi.set_mode(SPI_MODE_PARENT);
+  spi.enable();
 
-	event_begin_loop();
+  char *msg = "Hello, world!";
 
-	return 0;
+  while (1) {
+    spi.burst_write(msg, strlen(msg));
+
+    usart.tx_byte(0x69);
+
+    _delay_ms(1000);
+  }
+
+  return 0;
 }

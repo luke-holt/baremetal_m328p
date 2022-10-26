@@ -1,4 +1,4 @@
-PORT = /dev/ttyUSB0
+PORT = /dev/ttyUSB1
 FLASH_BAUD = 115200
 MONITOR_BAUD = 9600
 MCU = atmega328p
@@ -47,16 +47,16 @@ LDFLAGS = $(COMMON_FLAGS) $(addprefix -L,$(LIB_DIRS))
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	@mkdir -p $(dir $@)
 	@echo "Compiling $@..."
-	$(CC) $(CFLAGS) -c $^ -o $@
+	@$(CC) $(CFLAGS) -c $^ -o $@
 	@echo ""
 
 # Linking. Remove eeprom section and convert binary to ihex format
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(dir $@)
 	@echo "Linking..."
-	$(CC) $(LDFLAGS) -o $@ $^
+	@$(CC) $(LDFLAGS) -o $@ $^
 	@echo "\nConverting to ihex format"
-	$(OBJCP) -O ihex -R .eeprom $@ $@.hex
+	@$(OBJCP) -O ihex -R .eeprom $@ $@.hex
 
 # Phony targets
 .PHONY: all clean flash monitor
@@ -68,7 +68,7 @@ clean:
 	@rm -r $(BUILD_DIR)
 
 flash: all
-	$(AVRDUDE) -F -V -c arduino -p $(MCU) -P $(PORT) -b $(FLASH_BAUD) -U flash:w:$(TARGET).hex
+	@$(AVRDUDE) -F -V -c arduino -p $(MCU) -P $(PORT) -b $(FLASH_BAUD) -U flash:w:$(TARGET).hex
 
 monitor:
 	screen $(PORT) $(MONITOR_BAUD) $(USART_FORMAT)
