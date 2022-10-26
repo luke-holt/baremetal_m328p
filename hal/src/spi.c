@@ -1,13 +1,9 @@
 #include <avr/io.h>
-<<<<<<< HEAD
 #include <util/delay.h>
-    == == ==
-    =
->>>>>>> ef8c06344c992440e769629d76442eb25accc237
 
 #include "spi.h"
 
-        static void set_int_enable(uint8_t en) {
+static void set_int_enable(uint8_t en) {
   if (en == 1) {
     SPCR |= (1 << SPIE);
   } else if (en == 0) {
@@ -79,7 +75,6 @@ static void set_clock_rate(spi_clock_rate_t crate) {
 static void write_read(uint8_t tx_byte, uint8_t *rx_byte) {
   SPDR = tx_byte;
 
-<<<<<<< HEAD
   while ((SPSR & (1 << SPIF)) != (1 << SPIF))
     ;
 
@@ -107,35 +102,7 @@ static void burst_read(uint8_t *buf, size_t sz) {
 }
 
 static void burst_write_read(uint8_t *tx_buf, uint8_t *rx_buf, size_t sz) {
-  /* Transmit bytes in tx buffer while reading received bytes into rx buffer */
-  int i = (int)sz;
-  while (i--) {
-=======
-  while (~(SPSR & (1 << SPIF)))
-    ;
-
-  *rx_byte = SPDR;
-}
-
-static inline void burst_write(uint8_t *buf, size_t sz) {
-  /* Transmit the buffer while ignoring any possible received bits */
-  while (sz--) write_read(*buf++, NULL);
-}
-
-static inline void burst_read(uint8_t *buf, size_t sz) {
-  /* While the read buffer fills up, transmit 0 */
-  while (sz--) write_read(0, buf++);
-}
-
-static inline void burst_write_read(uint8_t *tx_buf, uint8_t *rx_buf,
-                                    size_t sz) {
-  /* Transmit bytes in tx buffer while reading received bytes into rx buffer */
-  while (sz--) {
->>>>>>> ef8c06344c992440e769629d76442eb25accc237
-    write_read(*tx_buf, rx_buf);
-    tx_buf++;
-    rx_buf++;
-  }
+  /* TODO: This. */
 }
 
 spi_driver_api_t spi_get_inst(void) {
