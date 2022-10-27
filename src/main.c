@@ -15,14 +15,15 @@
 #include "lcd1602a.h"
 
 static usart_driver_api_t usart;
-static int usart_grpno;
+// static int usart_grpno;
 
-static adc_driver_api_t adc;
-static int adc_grpno;
+// static adc_driver_api_t adc;
+// static int adc_grpno;
 
 static spi_driver_api_t spi;
 // static int spi_grpno;
 
+/*
 ISR(USART_RX_vect) {
   event_msg_t *msg = malloc(sizeof(msg));
   msg->grpno = usart_grpno;
@@ -60,14 +61,13 @@ static void adc_handler(event_msg_t *msg) {
 
   adc.trig_conv();
 }
+*/
 
 int main(void) {
-  /*
-        usart_grpno = event_register_group(&usart_handler);
-        adc_grpno = event_register_group(&adc_handler);
+  // usart_grpno = event_register_group(&usart_handler);
+  // adc_grpno = event_register_group(&adc_handler);
 
-        sei();
-  */
+  // sei();
 
   usart = usart_get_inst();
 
@@ -78,13 +78,13 @@ int main(void) {
   usart.tx_byte(0x41); /* A */
 
   /*
-        adc = adc_get_inst();
+  adc = adc_get_inst();
 
-        adc.set_prescaler(ADC_PS_128);
-        adc.set_int_enable(1);
-        adc.enable();
+  adc.set_prescaler(ADC_PS_128);
+  adc.set_int_enable(1);
+  adc.enable();
 
-        pwm_init(PWM_PIN_PB1);
+  pwm_init(PWM_PIN_PB1);
   */
 
   lcd_init();

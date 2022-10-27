@@ -26,9 +26,9 @@ static void set_mode(spi_mode_t mode) {
   DDRB &= ~(7 << DDB2);
 
   if (mode == SPI_MODE_CHILD) {
-    DDRB |= (1 << DDB4); /* MOSI output */
+    DDRB |= (1 << DDB4); /* MISO output */
   } else {
-    /* SS, MISO, SCK as output */
+    /* SS, MOSI, SCK as outputs */
     DDRB |= (1 << DDB2) | (1 << DDB3) | (1 << DDB5);
   }
 }
