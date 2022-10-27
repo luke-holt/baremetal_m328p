@@ -88,13 +88,13 @@ int main(void) {
   adc.enable();
 
   pwm_init(PWM_PIN_PB1);
+  */
 
   lcd_init();
 
   lcd_println("hello, friend", LCD_TOP_ROW);
   lcd_shift_down();
-  lcd_println("my name is Luke", LCD_TOP_ROW);
-  */
+  lcd_println("my name is luke", LCD_TOP_ROW);
 
   // event_begin_loop();
 

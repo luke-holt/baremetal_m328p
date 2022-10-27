@@ -1,6 +1,8 @@
 #ifndef LCD1602A_H__
 #define LCD1602A_H__
 
+#include <stdint.h>
+
 #define LCD_TOP_ROW 0
 #define LCD_BOT_ROW 1
 
