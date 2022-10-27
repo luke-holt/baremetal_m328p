@@ -14,7 +14,7 @@
 static char lcd_cur_state_top[16];
 static char lcd_cur_state_bot[16];
 
-static inline void lcd_set_rs(uint8_t state) { gpio_write(&PORTD, PD2, state); }
+static inline void lcd_set_rs(uint8_t state) { gpio_write(&PORTB, PB0, state); }
 
 static void lcd_pulse_en(void) {
   gpio_write(&PORTD, PD3, LOW);
@@ -90,12 +90,12 @@ void lcd_shift_down(void) {
 
 void lcd_init(void) {
   /* Set RS, E and 4 data pins to output */
-  gpio_pin_mode(&DDRD, DDD2, OUTPUT);
-  gpio_pin_mode(&DDRD, DDD3, OUTPUT);
-  gpio_pin_mode(&DDRD, DDD4, OUTPUT);
-  gpio_pin_mode(&DDRD, DDD5, OUTPUT);
-  gpio_pin_mode(&DDRD, DDD6, OUTPUT);
-  gpio_pin_mode(&DDRD, DDD7, OUTPUT);
+  gpio_pin_mode(&DDRB, DDB0, OUTPUT); /* RS */
+  gpio_pin_mode(&DDRD, DDD3, OUTPUT); /* E  */
+  gpio_pin_mode(&DDRD, DDD4, OUTPUT); /* D4 */
+  gpio_pin_mode(&DDRD, DDD5, OUTPUT); /* D5 */
+  gpio_pin_mode(&DDRD, DDD6, OUTPUT); /* D6 */
+  gpio_pin_mode(&DDRD, DDD7, OUTPUT); /* D7 */
 
   /* Ensure LCD power up */
   _delay_ms(50);

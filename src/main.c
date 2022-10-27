@@ -94,7 +94,7 @@ int main(void) {
 
   lcd_println("hello, friend", LCD_TOP_ROW);
   lcd_shift_down();
-  lcd_println("my name is luke", LCD_TOP_ROW);
+  lcd_println("my name is jeff", LCD_TOP_ROW);
 
   // event_begin_loop();
 
