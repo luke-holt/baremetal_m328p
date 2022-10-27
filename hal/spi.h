@@ -42,8 +42,8 @@ typedef enum spi_clock_rate_t {
 } spi_clock_rate_t;
 
 typedef enum spi_int_enable_t {
-  SPI_INT_ENABLE,
   SPI_INT_DISABLE,
+  SPI_INT_ENABLE,
 } spi_int_enable_t;
 
 typedef struct spi_config_t {
@@ -56,7 +56,7 @@ typedef struct spi_config_t {
 } spi_config_t;
 
 typedef void (*spi_set_cfg_t)(spi_config_t *cfg);
-typedef void (*spi_set_enable_t)(uint8_t value);
+typedef void (*spi_enable_t)(void);
 
 typedef void (*spi_write_read_t)(uint8_t tx_byte, uint8_t *rx_byte);
 typedef void (*spi_burst_write)(uint8_t *buf, size_t sz);
@@ -67,7 +67,7 @@ typedef void (*spi_burst_write_read)(uint8_t *tx_buf, uint8_t *rx_buf,
 /* TODO: DOC: Add documentation to the api function calls */
 typedef struct spi_driver_api_t {
   spi_set_cfg_t set_config;
-  spi_set_enable_t set_enable;
+  spi_enable_t enable;
   spi_write_read_t write_read;
   spi_burst_write burst_write;
   spi_burst_read burst_read;

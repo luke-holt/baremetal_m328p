@@ -1,8 +1,6 @@
-#include <stdlib.h>
-
 #include <avr/interrupt.h>
 #include <avr/io.h>
-
+#include <stdlib.h>
 #include <util/delay.h>
 
 #include "event_msg.h"
@@ -104,9 +102,10 @@ int main(void) {
       .cpol = SPI_CPOL_0,
       .cpha = SPI_CPHA_0,
       .crate = SPI_CRATE_125K,
+      .int_enable = SPI_INT_ENABLE,
   };
   spi.set_config(&spi_cfg);
-  spi.set_enable(1);
+  spi.enable();
 
   char *msg = "Hello, world!";
 
