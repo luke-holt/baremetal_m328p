@@ -98,12 +98,15 @@ int main(void) {
   // event_begin_loop();
 
   spi = spi_get_inst();
-  spi.set_data_order(SPI_DORDER_MSB);
-  spi.set_clock_polarity(SPI_CPOL_0);
-  spi.set_clock_phase(SPI_CPHA_0);
-  spi.set_clock_rate(SPI_CRATE_128);
-  spi.set_mode(SPI_MODE_PARENT);
-  spi.enable();
+  spi_config_t spi_cfg = {
+      .data_order = SPI_DORDER_MSB,
+      .mode = SPI_MODE_PARENT,
+      .cpol = SPI_CPOL_0,
+      .cpha = SPI_CPHA_0,
+      .crate = SPI_CRATE_125K,
+  };
+  spi.set_config(&spi_cfg);
+  spi.set_enable(1);
 
   char *msg = "Hello, world!";
 

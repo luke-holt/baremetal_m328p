@@ -18,8 +18,6 @@ static inline void set_data_order(spi_dorder_t order) {
   SPCR |= (order << DORD);
 }
 
-static inline void enable(void) { SPCR |= (1 << SPE); }
-
 static void set_mode(spi_mode_t mode) {
   SPCR &= ~(1 << MSTR);
   SPCR |= (mode << MSTR);
@@ -72,6 +70,25 @@ static void set_clock_rate(spi_clock_rate_t crate) {
   SPCR |= ((crate >> 2) << SPI2X);
 }
 
+static void set_config(spi_config_t *cfg) {
+  set_data_order(cfg->data_order);
+  set_mode(cfg->mode);
+  set_clock_polarity(cfg->cpol);
+  set_clock_phase(cfg->cpha);
+  set_clock_rate(cfg->crate);
+  set_int_enable(cfg->int_enable);
+}
+
+static void set_enable(uint8_t value) {
+  if (value == 1) {
+    /* Set enable bit */
+    SPCR |= (1 << SPE);
+  } else {
+    /* Clear enable bit */
+    SPCR &= ~(1 << SPE);
+  }
+}
+
 static void write_read(uint8_t tx_byte, uint8_t *rx_byte) {
   SPDR = tx_byte;
 
@@ -102,18 +119,18 @@ static void burst_read(uint8_t *buf, size_t sz) {
 }
 
 static void burst_write_read(uint8_t *tx_buf, uint8_t *rx_buf, size_t sz) {
-  /* TODO: This. */
+  int i = (int)sz;
+  while (i--) {
+    write_read(*tx_buf, rx_buf);
+    rx_buf++;
+    tx_buf++;
+  }
 }
 
 spi_driver_api_t spi_get_inst(void) {
   spi_driver_api_t api = {
-      .set_int_enable = set_int_enable,
-      .set_data_order = set_data_order,
-      .enable = enable,
-      .set_mode = set_mode,
-      .set_clock_polarity = set_clock_polarity,
-      .set_clock_phase = set_clock_phase,
-      .set_clock_rate = set_clock_rate,
+      .set_config = set_config,
+      .set_enable = set_enable,
       .write_read = write_read,
       .burst_write = burst_write,
       .burst_read = burst_read,

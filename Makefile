@@ -1,4 +1,4 @@
-PORT = /dev/ttyUSB1
+PORT = /dev/ttyUSB0
 FLASH_BAUD = 115200
 MONITOR_BAUD = 9600
 MCU = atmega328p
