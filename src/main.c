@@ -7,6 +7,7 @@
 
 /* New hal */
 #include "adc.h"
+#include "gpio.h"
 #include "pwm.h"
 #include "spi.h"
 #include "usart.h"
@@ -77,6 +78,8 @@ int main(void) {
   usart.enable();
   usart.tx_byte(0x41); /* A */
 
+  gpio_pin_mode(&DDRB, DDB1, OUTPUT);
+
   /*
   adc = adc_get_inst();
 
@@ -85,13 +88,13 @@ int main(void) {
   adc.enable();
 
   pwm_init(PWM_PIN_PB1);
-  */
 
   lcd_init();
 
   lcd_println("hello, friend", LCD_TOP_ROW);
   lcd_shift_down();
   lcd_println("my name is Luke", LCD_TOP_ROW);
+  */
 
   // event_begin_loop();
 
@@ -112,7 +115,7 @@ int main(void) {
   while (1) {
     spi.burst_write(msg, strlen(msg));
 
-    usart.tx_byte(0x69);
+    gpio_toggle(&PORTB, PB1);
 
     _delay_ms(1000);
   }

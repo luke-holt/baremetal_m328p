@@ -3,6 +3,7 @@ HAL_OBJ_DIR = $(OBJ_DIR)/hal
 HAL_SRC_DIR = hal/src
 
 HAL_SOURCES = \
+	gpio.c \
 	usart.c \
 	adc.c \
 	pwm.c \
