@@ -24,6 +24,8 @@ static usart_driver_api_t usart;
 static spi_driver_api_t spi;
 // static int spi_grpno;
 
+static void blink(void) { gpio_toggle(&PORTB, PB1); }
+
 /*
 ISR(USART_RX_vect) {
   event_msg_t *msg = malloc(sizeof(msg));
@@ -68,13 +70,19 @@ int main(void) {
   // usart_grpno = event_register_group(&usart_handler);
   // adc_grpno = event_register_group(&adc_handler);
 
-  // sei();
+  sei();
+
+  /* Enable INT0 pin and trigger on active low */
+  gpio_enable_int(GPIO_INT0, GPIO_INT_LOW);
+
+  /* Register INT0 callback function */
+  gpio_reg_cb(GPIO_INT0, &blink);
 
   usart = usart_get_inst();
 
   usart.set_baudrate(9600);
   usart.set_frame_cfg(USART_NDATA_8, USART_PARITY_DISABLED, USART_NSTOP_1);
-  usart.set_int_enable(1);
+  usart.set_int_enable(0);
   usart.enable();
   usart.tx_byte(0x41); /* A */
 
@@ -105,7 +113,7 @@ int main(void) {
       .cpol = SPI_CPOL_0,
       .cpha = SPI_CPHA_0,
       .crate = SPI_CRATE_125K,
-      .int_enable = SPI_INT_ENABLE,
+      .int_enable = SPI_INT_DISABLE,
   };
   spi.set_config(&spi_cfg);
   spi.enable();
@@ -115,7 +123,7 @@ int main(void) {
   while (1) {
     spi.burst_write(msg, strlen(msg));
 
-    gpio_toggle(&PORTB, PB1);
+    // gpio_toggle(&PORTB, PB1);
 
     _delay_ms(1000);
   }
